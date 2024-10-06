@@ -1,57 +1,43 @@
-#include <assert.h>
-#include <limits.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-int main()
-{
-    int n, i, j, k, t, s = 0, o = 0, e = 0;
+int main() {
+    int t;
     scanf("%d", &t);
-    int a[t], b[t];
-    for (i = 0; i < t; i++)
-    {
+    int *a = malloc(t * sizeof(int));
+    
+    for (int i = 0; i < t; i++) {
         scanf("%d", &a[i]);
     }
-    for (i = 0; i < t; i++)
-    {
-        s = 0;
-        o = 0;
-        e = 0;
-        for (j = i + 1; j < t; j++)
-        {
-            s++;
-            if (a[i] == a[j])
-            {
-                e = 1;
-                break;
-            }
-            else
-            {
-                o++;
-            }
-        }
-        if (e == 1)
-            b[i] = s;
-        else
-            b[i] = 0;
+    
+    int *b = malloc(t * sizeof(int));
+    int *last_seen = malloc(10001 * sizeof(int)); // Assuming a[i] ranges from 0 to 10000
+    for (int i = 0; i < 10001; i++) {
+        last_seen[i] = -1; // Initialize with -1
     }
 
-    k = 10000;
-    for (i = 0; i < t; i++)
-    {
-        if (b[i] < k && b[i] > 0)
-        {
-            k = b[i];
+    for (int i = 0; i < t; i++) {
+        if (last_seen[a[i]] != -1) {
+            b[last_seen[a[i]]] = i - last_seen[a[i]]; // Calculate distance to previous occurrence
+        }
+        last_seen[a[i]] = i; // Update last seen index
+    }
+
+    int min_distance = 10001; // Arbitrarily large value
+    for (int i = 0; i < t; i++) {
+        if (b[i] > 0 && b[i] < min_distance) {
+            min_distance = b[i];
         }
     }
-    if (k == 10000)
-        printf("-1");
-    else
-        printf("%d", k);
+
+    if (min_distance == 10001) {
+        printf("-1\n");
+    } else {
+        printf("%d\n", min_distance);
+    }
+
+    free(a);
+    free(b);
+    free(last_seen);
     return 0;
 }
